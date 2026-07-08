@@ -3,273 +3,511 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlobBuy | Złóż zamówienie</title>
+    <title>GlobBuy | Najwyższa Jakość</title>
     <style>
+        /* Zmienne i reset */
         :root {
-            --main-color: #00f3ff;
-            --dark-bg: #0d0e15;
-            --panel-bg: #1a1c29;
-            --success-color: #00ff88;
-            --history-color: #ffb800;
+            --main-glow: #00f3ff;
+            --main-glow-dim: rgba(0, 243, 255, 0.4);
+            --bg-dark: #050507;
+            --glass-bg: rgba(15, 17, 26, 0.7);
+            --glass-border: rgba(0, 243, 255, 0.2);
+            --text-main: #ffffff;
+            --text-muted: #94a1b2;
+            --success: #00ff88;
         }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            background-color: var(--dark-bg);
-            color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 243, 255, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 243, 255, 0.05), transparent 25%);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Sekcja HERO (Główny ekran) */
+        .hero {
+            height: 100vh;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
-        }
-        
-        /* Pasek nawigacji górnej */
-        .top-nav {
-            width: 100%;
-            max-width: 800px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .history-btn {
-            background: transparent;
-            color: var(--history-color);
-            border: 1px solid var(--history-color);
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.3s;
-            font-size: 14px;
-        }
-        .history-btn:hover {
-            background: var(--history-color);
-            color: #000;
+            text-align: center;
+            padding: 20px;
+            position: relative;
         }
 
-        h1 {
-            color: var(--main-color);
-            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
-            font-size: 3em;
-            margin: 0 0 10px 0;
-            text-align: center;
+        .hero h1 {
+            font-size: clamp(2.5em, 5vw, 4.5em);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            max-width: 1000px;
         }
-        .container {
-            background: var(--panel-bg);
-            padding: 30px;
+
+        /* Dynamiczny tekst */
+        .typing-container {
+            color: var(--main-glow);
+            text-shadow: 0 0 20px var(--main-glow-dim);
+            border-right: 3px solid var(--main-glow);
+            white-space: nowrap;
+            padding-right: 5px;
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink { 50% { border-color: transparent; } }
+
+        .hero p {
+            font-size: clamp(1.2em, 2vw, 1.5em);
+            color: var(--text-muted);
+            margin-bottom: 50px;
+            max-width: 600px;
+        }
+
+        /* Duży Przycisk ZAKUP TERAZ */
+        .mega-btn {
+            background: linear-gradient(45deg, #00f3ff, #0088ff);
+            color: #000;
+            border: none;
+            padding: 20px 50px;
+            font-size: 1.5em;
+            font-weight: 900;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mega-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: rgba(255,255,255,0.2);
+            transform: rotate(45deg) translateY(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .mega-btn:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.8);
+        }
+
+        .mega-btn:hover::after {
+            transform: rotate(45deg) translateY(100%);
+        }
+
+        /* Pulsująca strzałka w dół */
+        .scroll-down {
+            position: absolute;
+            bottom: 40px;
+            font-size: 2em;
+            color: var(--text-muted);
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        /* Pasek poruszających się opinii */
+        .reviews-wrapper {
+            padding: 60px 0;
+            background: rgba(0,0,0,0.4);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Cienie po bokach, żeby tekst ładnie znikał */
+        .reviews-wrapper::before, .reviews-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 150px;
+            z-index: 2;
+        }
+        .reviews-wrapper::before {
+            left: 0;
+            background: linear-gradient(to right, var(--bg-dark), transparent);
+        }
+        .reviews-wrapper::after {
+            right: 0;
+            background: linear-gradient(to left, var(--bg-dark), transparent);
+        }
+
+        .marquee-track {
+            display: flex;
+            width: calc(400px * 10); /* Szerokość kart * ilość */
+            animation: scroll-left 40s linear infinite;
+        }
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll-left {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-400px * 5)); } /* Przesunięcie o połowę (oryginały) */
+        }
+
+        .review-card {
+            width: 360px;
+            margin: 0 20px;
+            background: rgba(20, 22, 30, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 12px;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+            padding: 25px;
+            flex-shrink: 0;
+        }
+        .stars { color: #ffb800; font-size: 1.2em; margin-bottom: 10px; }
+        .rev-text { font-size: 0.95em; color: #ddd; line-height: 1.5; margin-bottom: 15px; font-style: italic; }
+        .rev-author { font-weight: 700; color: var(--main-glow); font-size: 0.9em; }
+
+        /* FULL SCREEN MODAL (Formularz na cały ekran) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(5, 5, 7, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 30px; right: 40px;
+            font-size: 3em;
+            color: #fff;
+            cursor: pointer;
+            transition: color 0.3s;
+            line-height: 1;
+        }
+        .close-btn:hover { color: #ff3366; }
+
+        /* Wnętrze formularza (z poprzedniego projektu, lekko odświeżone) */
+        .form-container {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 20px;
             width: 100%;
             max-width: 800px;
-            margin-bottom: 20px;
-            box-sizing: border-box;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
         }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .modal-overlay.active .form-container {
+            transform: scale(1);
+        }
+
+        .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 25px; }
         .tab {
-            padding: 10px; background: #222; border-radius: 6px;
-            cursor: pointer; transition: 0.3s; flex: 1; text-align: center;
-            font-size: 14px;
-        }
-        .tab:hover, .tab.active { background: var(--main-color); color: #000; font-weight: bold; }
-        
-        .input-group { margin-bottom: 15px; text-align: left; }
-        .input-group label { display: block; margin-bottom: 5px; color: #aaa; }
-        input, select, textarea {
-            width: 100%; padding: 12px; border-radius: 6px;
-            border: 1px solid #333; background: #222; color: #fff;
-            box-sizing: border-box; font-size: 14px;
-        }
-        
-        .submit-btn {
-            background: transparent;
-            color: var(--main-color);
-            border: 2px solid var(--main-color);
-            padding: 12px 20px;
-            font-size: 16px;
-            border-radius: 6px;
-            cursor: pointer;
+            flex: 1 1 calc(25% - 10px); min-width: 110px; padding: 12px;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid transparent;
+            border-radius: 8px; cursor: pointer; text-align: center; font-size: 14px; font-weight: 600;
             transition: 0.3s;
-            width: 100%;
-            margin-top: 10px;
-            font-weight: bold;
         }
-        .submit-btn:hover {
-            background: var(--main-color);
-            color: #000;
-            box-shadow: 0 0 15px var(--main-color);
+        .tab:hover { background: rgba(255, 255, 255, 0.1); }
+        .tab.active { background: rgba(0, 243, 255, 0.1); border-color: var(--main-glow); color: var(--main-glow); }
+
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 13px; text-transform: uppercase; }
+        input, select, textarea {
+            width: 100%; padding: 15px; border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(0, 0, 0, 0.4); color: #fff;
+            font-family: inherit; font-size: 15px; transition: 0.3s; box-sizing: border-box;
         }
-        
-        /* Ekran sukcesu */
-        #success-screen, #history-screen {
-            display: none;
-            text-align: center;
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--main-glow); }
+
+        .submit-btn {
+            width: 100%; padding: 18px; background: transparent; color: var(--main-glow);
+            border: 2px solid var(--main-glow); border-radius: 8px; font-size: 18px; font-weight: bold;
+            cursor: pointer; text-transform: uppercase; transition: 0.3s; margin-top: 10px;
         }
+        .submit-btn:hover { background: var(--main-glow); color: #000; box-shadow: 0 0 20px rgba(0, 243, 255, 0.5); }
+
+        /* Panele w modalu */
+        .modal-screen { display: none; }
+        .modal-screen.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         .order-code-box {
-            background: #222;
-            border: 2px dashed var(--success-color);
-            padding: 20px;
-            font-size: 2em;
-            letter-spacing: 2px;
-            color: var(--success-color);
-            border-radius: 8px;
-            margin: 20px 0;
-            user-select: all;
+            background: rgba(0, 255, 136, 0.1); border: 2px dashed var(--success);
+            padding: 25px; font-size: 2.5em; font-weight: 800; letter-spacing: 4px;
+            color: var(--success); border-radius: 12px; margin: 30px 0; text-align: center;
         }
         .discord-btn {
-            background: #5865F2;
-            color: white;
-            border: none;
-            display: inline-block;
-            text-decoration: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 10px;
-            transition: 0.2s;
+            background: #5865F2; color: white; border: none; display: block; text-align: center;
+            text-decoration: none; padding: 16px; border-radius: 8px; font-size: 18px; font-weight: bold; transition: 0.3s;
         }
-        .discord-btn:hover {
-            background: #4752C4;
-            box-shadow: 0 0 15px rgba(88, 101, 242, 0.5);
-        }
+        .discord-btn:hover { background: #4752C4; }
 
-        /* Lista historii */
-        .history-item {
-            background: #222;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--history-color);
-            text-align: left;
+        /* Przycisk historii w rogu */
+        .history-trigger {
+            position: absolute; top: 20px; left: 20px;
+            background: transparent; color: #ffb800; border: 1px solid #ffb800;
+            padding: 8px 15px; border-radius: 6px; cursor: pointer; transition: 0.3s; z-index: 100;
         }
-        .history-item strong { color: var(--main-color); letter-spacing: 1px; }
+        .history-trigger:hover { background: #ffb800; color: #000; }
+        
+        .history-item { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid #ffb800; text-align: left; }
+
+        @media (max-width: 600px) {
+            .form-container { padding: 20px; }
+            .tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 10px; }
+            .tab { flex: 0 0 85%; }
+            .mega-btn { font-size: 1.2em; padding: 18px 35px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="top-nav">
-        <h1>GlobBuy</h1>
-        <button class="history-btn" onclick="showHistory()">Twoje Kody Zgłoszeń</button>
-    </div>
-    
-    <div class="container" id="order-form-container">
-        <div class="tabs">
-            <div class="tab active" onclick="setCategory('Gry')">🎮 Gry</div>
-            <div class="tab" onclick="setCategory('Konta')">📺 Konta</div>
-            <div class="tab" onclick="setCategory('Waluty')">💰 Waluta</div>
-            <div class="tab" onclick="setCategory('Pojazdy z Chin')">🛴 Pojazdy z Chin</div>
+    <button class="history-trigger" onclick="openModal(); switchModalScreen('history-screen'); loadHistory();">Moje Zgłoszenia</button>
+
+    <section class="hero">
+        <h1>Szukasz najwyższej jakości<br><span class="typing-container" id="typewriter"></span></h1>
+        <p>Złóż zamówienie i powiedz co chcesz. Mamy wszystko, co potrzebne, by wrzucić Cię na wyższy poziom.</p>
+        
+        <button class="mega-btn" onclick="openModal(); switchModalScreen('order-screen');">ZAKUP TERAZ</button>
+        
+        <div class="scroll-down" onclick="window.scrollBy({ top: window.innerHeight, left: 0, behavior: 'smooth' });">↓</div>
+    </section>
+
+    <section class="reviews-wrapper">
+        <div class="marquee-track">
+            <div class="review-card">
+                <div class="stars">★★★★★</div>
+                <div class="rev-text">"Kupiłem kontroler do mojej hulajnogi. Doszło prosto z Chin, zero problemów. Ceny dużo lepsze niż na innych stronach, świetny kontakt!"</div>
+                <div class="rev-text rev-author">— Krzyś</div>
+            </div>
+            <div class="review-card">
+                <div class="stars">★★★★★</div>
+                <div class="rev-text">"Zamówiłem optymalizację pod FiveM. W końcu usunięte crashe CEF i mam 120 FPS na serwerach RP. Chłop wie co robi. Polecam."</div>
+                <div class="rev-text rev-author">— Jeremi</div>
+            </div>
+            <div class="review-card">
+                <div class="stars">★★★★★</div>
+                <div class="rev-text">"Paczka modów i opony pod MX Bikes ogarnięte w 5 minut. Wystarczyło otworzyć ticket na serwerze i wszystko dostałem do ręki."</div>
+                <div class="rev-text rev-author">— Mateusz Florczak</div>
+            </div>
+            <div class="review-card">
+                <div class="stars">★★★★★</div>
+                <div class="rev-text">"Szybka transakcja. Płaciłem blikiem, dostałem V-Dolce w 3 minuty na moje konto w Fortnite. Na pewno jeszcze tu wrócę."</div>
+                <div class="rev-text rev-author">— Dawid</div>
+            </div>
+            <div class="review-card">
+                <div class="stars">★★★★★</div>
+                <div class="rev-text">"Złożyłem duże zapytanie o sprzęt z Alibaby. Właściciel wszystko mi wycenił i kontener już płynie. Pełna profeska."</div>
+                <div class="rev-text rev-author">— Jacek</div>
+            </div>
+            
+            <div class="review-card">
+                <div class="stars">★★★★★</div>
+                <div class="rev-text">"Kupiłem kontroler do mojej hulajnogi. Doszło prosto z Chin, zero problemów. Ceny dużo lepsze niż na innych stronach, świetny kontakt!"</div>
+                <div class="rev-text rev-author">— Krzyś</div>
+            </div>
+            <div class="review-card">
+                <div class="stars">★★★★★</div>
+                <div class="rev-text">"Zamówiłem optymalizację pod FiveM. W końcu usunięte crashe CEF i mam 120 FPS na serwerach RP. Chłop wie co robi. Polecam."</div>
+                <div class="rev-text rev-author">— Jeremi</div>
+            </div>
+            <div class="review-card">
+                <div class="stars">★★★★★</div>
+                <div class="rev-text">"Paczka modów i opony pod MX Bikes ogarnięte w 5 minut. Wystarczyło otworzyć ticket na serwerze i wszystko dostałem do ręki."</div>
+                <div class="rev-text rev-author">— Mateusz Florczak</div>
+            </div>
+            <div class="review-card">
+                <div class="stars">★★★★★</div>
+                <div class="rev-text">"Szybka transakcja. Płaciłem blikiem, dostałem V-Dolce w 3 minuty na moje konto w Fortnite. Na pewno jeszcze tu wrócę."</div>
+                <div class="rev-text rev-author">— Dawid</div>
+            </div>
+            <div class="review-card">
+                <div class="stars">★★★★★</div>
+                <div class="rev-text">"Złożyłem duże zapytanie o sprzęt z Alibaby. Właściciel wszystko mi wycenił i kontener już płynie. Pełna profeska."</div>
+                <div class="rev-text rev-author">— Jacek</div>
+            </div>
         </div>
+    </section>
 
-        <h3>Kategoria: <span id="selected-category" style="color: var(--main-color);">Gry</span></h3>
+    <div class="modal-overlay" id="order-modal">
+        <div class="close-btn" onclick="closeModal()">&times;</div>
         
-        <div class="input-group">
-            <label>Wybierz Platformę (jeśli dotyczy)</label>
-            <select id="platform">
-                <option value="Brak / Nie dotyczy">Brak / Nie dotyczy</option>
-                <option value="PC">PC</option>
-                <option value="PS5">PlayStation 5</option>
-                <option value="PS4">PlayStation 4</option>
-                <option value="Xbox Series X/S">Xbox Series X/S</option>
-            </select>
+        <div class="form-container">
+            
+            <div id="order-screen" class="modal-screen active">
+                <h2 style="margin-top:0; color:var(--main-glow); margin-bottom: 20px;">Kreator Zamówienia</h2>
+                <div class="tabs">
+                    <div class="tab active" onclick="setCategory(this, 'Gry')">🎮 Gry</div>
+                    <div class="tab" onclick="setCategory(this, 'Konta')">📺 Konta</div>
+                    <div class="tab" onclick="setCategory(this, 'Waluty')">💰 Waluta</div>
+                    <div class="tab" onclick="setCategory(this, 'Optymalizacje')">⚡ Optymalizacje PC/Gier</div>
+                    <div class="tab" onclick="setCategory(this, 'Pojazdy z Chin')">🛴 Pojazdy z Chin</div>
+                    <div class="tab" onclick="setCategory(this, 'Inne')">📦 Inne</div>
+                </div>
+
+                <div class="input-group">
+                    <label>Platforma (Opcjonalnie)</label>
+                    <select id="platform">
+                        <option value="Nie dotyczy">Nie dotyczy / Inne</option>
+                        <option value="PC">PC</option>
+                        <option value="PS5">PlayStation 5</option>
+                        <option value="PS4">PlayStation 4</option>
+                        <option value="Xbox Series X/S">Xbox Series X/S</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Metoda Płatności</label>
+                    <select id="payment-method">
+                        <option value="BLIK">BLIK</option>
+                        <option value="PayPal">PayPal</option>
+                        <option value="LTC (Litecoin)">Crypto: LTC</option>
+                        <option value="BTC (Bitcoin)">Crypto: BTC</option>
+                        <option value="Paysafecard">Paysafecard</option>
+                        <option value="Inna">Inna metoda</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Opisz swoje zamówienie</label>
+                    <textarea id="order-details" rows="4" placeholder="Opisz dokładnie czego szukasz. Jaka platforma? Co z ceną?"></textarea>
+                </div>
+
+                <button class="submit-btn" onclick="submitOrder()">Odbierz kod i przejdź na Discord</button>
+            </div>
+
+            <div id="success-screen" class="modal-screen" style="text-align: center;">
+                <h2 style="color: var(--success); margin-top:0;">Zgłoszenie Wygenerowane!</h2>
+                <p style="color: var(--text-muted);">Skopiuj poniższy kod, kliknij dołącz i wyślij go w tickecie na serwerze.</p>
+                
+                <div class="order-code-box" id="generated-code">GB-XXXXX</div>
+                
+                <a href="https://discord.gg/jCXMEBdMzG" target="_blank" class="discord-btn">Zrealizuj kod na Discordzie</a>
+            </div>
+
+            <div id="history-screen" class="modal-screen">
+                <h2 style="color: #ffb800; margin-top:0;">Historia Twoich Kodów</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Kody zapisane lokalnie w Twojej przeglądarce.</p>
+                
+                <div id="history-list" style="max-height: 300px; overflow-y: auto; padding-right: 10px;"></div>
+                
+                <button class="submit-btn" style="border-color: #555; color: #fff; background: rgba(255,255,255,0.1); margin-top: 20px;" onclick="switchModalScreen('order-screen')">Złóż nowe zamówienie</button>
+            </div>
+
         </div>
-
-        <div class="input-group">
-            <label>Preferowana Metoda Płatności</label>
-            <select id="payment-method">
-                <option value="BLIK">BLIK</option>
-                <option value="PayPal">PayPal</option>
-                <option value="LTC (Litecoin)">Crypto: LTC</option>
-                <option value="BTC (Bitcoin)">Crypto: BTC</option>
-                <option value="Paysafecard">Paysafecard</option>
-                <option value="Inna metoda">Inna metoda</option>
-            </select>
-        </div>
-
-        <div class="input-group">
-            <label>Czego dokładnie potrzebujesz?</label>
-            <textarea id="order-details" rows="5" placeholder="Np. Forza Horizon 5, klucz na Xbox. Jaka cena?"></textarea>
-        </div>
-
-        <button class="submit-btn" onclick="submitOrder()">Wyślij Zapytanie i Odbierz Kod</button>
-    </div>
-
-    <div class="container" id="success-screen">
-        <h2 style="color: var(--success-color);">Zgłoszenie wysłane!</h2>
-        <p>Skopiuj poniższy kod, wejdź na naszego Discorda i otwórz ticket, aby dokończyć zamówienie.</p>
-        
-        <div class="order-code-box" id="generated-code">GB-XXXXX</div>
-        
-        <p><i>Nie martw się, jeśli zamkniesz kartę! Kod zapisuje się w "Twoje Kody Zgłoszeń" u góry strony.</i></p>
-        
-        <a href="https://discord.gg/jCXMEBdMzG" target="_blank" class="discord-btn">Dołącz do Discorda i Otwórz Ticket</a>
-        <br><br>
-        <button class="history-btn" onclick="backToHome()" style="border-color: #555; color: #aaa;">Wróć do strony głównej</button>
-    </div>
-
-    <div class="container" id="history-screen">
-        <h2 style="color: var(--history-color);">Twoje wygenerowane kody</h2>
-        <p>Tutaj znajdziesz kody swoich wcześniejszych zapytań.</p>
-        
-        <div id="history-list"></div>
-        
-        <button class="submit-btn" onclick="backToHome()">Wróć do składania zamówienia</button>
     </div>
 
     <script>
-        let currentCategory = 'Gry';
-        
-        // Zaktualizowany link do webhooka
-        const webhookUrl = "https://discord.com/api/webhooks/1524502024274837554/5TZfq9ksgZZ_bGgaME9fB1yY5qJx-JLsWOYuFOkGNT-OEQE_v8sPfKbxTYVYsXOFVvMm";
+        // --- LOGIKA TYPING EFFECT ---
+        const words = ["dostawców z Chin?", "optymalizacji PC?", "kont premium?", "boostingu?", "najlepszych gier?", "walut w grach?"];
+        let i = 0; let j = 0; let isDeleting = false;
+        const textElement = document.getElementById("typewriter");
 
-        function setCategory(category) {
-            currentCategory = category;
-            document.getElementById('selected-category').innerText = category;
-            
-            // Dynamiczna zmiana podpowiedzi w textarea
-            const detailsArea = document.getElementById('order-details');
-            if (category === 'Pojazdy z Chin') {
-                detailsArea.placeholder = "Np. Rower elektryczny z Alibaby, wyczynowe części, kontroler do KuKirin G2 Master...";
-            } else if (category === 'Gry') {
-                detailsArea.placeholder = "Np. Forza Horizon 5, klucz na Xbox. Jaka cena?";
-            } else if (category === 'Waluty') {
-                detailsArea.placeholder = "Np. Potrzebuję 2000 Robuxów lub V-Dolców.";
+        function type() {
+            const currentWord = words[i];
+            if (isDeleting) {
+                textElement.innerText = currentWord.substring(0, j - 1);
+                j--;
             } else {
-                detailsArea.placeholder = "Opisz szczegółowo czego szukasz...";
+                textElement.innerText = currentWord.substring(0, j + 1);
+                j++;
             }
 
+            let typeSpeed = isDeleting ? 50 : 100;
+
+            if (!isDeleting && j === currentWord.length) {
+                typeSpeed = 2000; // Pauza na końcu słowa
+                isDeleting = true;
+            } else if (isDeleting && j === 0) {
+                isDeleting = false;
+                i = (i + 1) % words.length;
+                typeSpeed = 500; // Pauza przed nowym słowem
+            }
+            setTimeout(type, typeSpeed);
+        }
+        document.addEventListener("DOMContentLoaded", type);
+
+
+        // --- LOGIKA MODALA I FORMULARZA ---
+        let currentCategory = 'Gry';
+        const webhookUrl = "https://discord.com/api/webhooks/1524502024274837554/5TZfq9ksgZZ_bGgaME9fB1yY5qJx-JLsWOYuFOkGNT-OEQE_v8sPfKbxTYVYsXOFVvMm";
+
+        function openModal() {
+            document.getElementById('order-modal').classList.add('active');
+            document.body.style.overflow = 'hidden'; // Blokuje scrollowanie strony w tle
+        }
+
+        function closeModal() {
+            document.getElementById('order-modal').classList.remove('active');
+            document.body.style.overflow = 'auto'; // Odblokowuje scrollowanie
+            setTimeout(() => switchModalScreen('order-screen'), 400); // Reset do formy po ukryciu
+        }
+
+        function switchModalScreen(screenId) {
+            document.querySelectorAll('.modal-screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function setCategory(element, category) {
+            currentCategory = category;
+            const detailsArea = document.getElementById('order-details');
+            
+            // Kontekstowe podpowiedzi
+            if (category === 'Pojazdy z Chin') detailsArea.placeholder = "Np. Części do hulajnogi, rower z Alibaby, jaka wycena z transportem?";
+            else if (category === 'Optymalizacje') detailsArea.placeholder = "Np. Mam ścinki w FiveM, laptop z RTX, potrzebuje zbić zużycie procesora.";
+            else if (category === 'Gry') detailsArea.placeholder = "Np. Forza Horizon 5, klucz na Xbox. Jaka cena?";
+            else if (category === 'Waluty') detailsArea.placeholder = "Np. Potrzebuję 2000 Robuxów na podane konto.";
+            else detailsArea.placeholder = "Opisz szczegółowo co chcesz zamówić...";
+
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
+            element.classList.add('active');
         }
 
         function generateOrderCode() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let result = '';
-            for (let i = 0; i < 6; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
+            for (let i = 0; i < 6; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
             return 'GB-' + result;
         }
 
-        // Zapisywanie do Local Storage (Przeglądarka)
         function saveOrderToHistory(code, category) {
             let history = JSON.parse(localStorage.getItem('globbuy_history')) || [];
             const date = new Date().toLocaleDateString('pl-PL') + " " + new Date().toLocaleTimeString('pl-PL');
-            
-            history.unshift({ code, category, date }); // Dodaje na początek listy
+            history.unshift({ code, category, date });
             localStorage.setItem('globbuy_history', JSON.stringify(history));
         }
 
-        // Wyświetlanie Historii
-        function showHistory() {
-            document.getElementById('order-form-container').style.display = 'none';
-            document.getElementById('success-screen').style.display = 'none';
-            document.getElementById('history-screen').style.display = 'block';
-
+        function loadHistory() {
             const historyList = document.getElementById('history-list');
             let history = JSON.parse(localStorage.getItem('globbuy_history')) || [];
             
             if (history.length === 0) {
-                historyList.innerHTML = "<p style='color:#777;'>Nie masz jeszcze zapisanych kodów.</p>";
+                historyList.innerHTML = "<p style='color:#777;'>Nie złożyłeś jeszcze żadnego zamówienia.</p>";
                 return;
             }
 
@@ -277,39 +515,33 @@
             history.forEach(item => {
                 historyList.innerHTML += `
                     <div class="history-item">
-                        Kod zgłoszenia: <strong>${item.code}</strong><br>
-                        <span style="font-size: 12px; color: #888;">
-                            Kategoria: ${item.category} | Data: ${item.date}
-                        </span>
+                        <div style="font-size: 11px; color: #aaa; margin-bottom: 3px;">Kategoria: ${item.category} | ${item.date}</div>
+                        <strong style="color: #ffb800; font-size: 1.1em; letter-spacing: 1px;">${item.code}</strong>
                     </div>
                 `;
             });
-        }
-
-        function backToHome() {
-            document.getElementById('history-screen').style.display = 'none';
-            document.getElementById('success-screen').style.display = 'none';
-            document.getElementById('order-form-container').style.display = 'block';
-            document.getElementById('order-details').value = '';
         }
 
         async function submitOrder() {
             const platform = document.getElementById('platform').value;
             const payment = document.getElementById('payment-method').value;
             const details = document.getElementById('order-details').value;
+            const btn = document.querySelector('.submit-btn');
 
             if(details.trim() === "") {
                 alert("Musisz opisać, czego potrzebujesz!");
                 return;
             }
 
+            btn.innerText = "Przetwarzanie...";
+            btn.disabled = true;
+
             const orderCode = generateOrderCode();
 
-            // Webhook Discord
             const payload = {
                 username: "GlobBuy System",
                 embeds: [{
-                    title: "🛒 Nowe zapytanie o produkt!",
+                    title: "🛒 Nowe zamówienie wleciało na serwer!",
                     color: 65535,
                     fields: [
                         { name: "Kod Zamówienia", value: `**${orderCode}**`, inline: false },
@@ -323,24 +555,23 @@
             };
 
             try {
-                // Wyślij na Discord
                 await fetch(webhookUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
-                // Zapisz w historii przeglądarki
                 saveOrderToHistory(orderCode, currentCategory);
-
-                // Zmień ekran
-                document.getElementById('order-form-container').style.display = 'none';
-                document.getElementById('success-screen').style.display = 'block';
                 document.getElementById('generated-code').innerText = orderCode;
+                document.getElementById('order-details').value = '';
+                
+                switchModalScreen('success-screen');
 
             } catch (error) {
-                alert("Wystąpił błąd. Skontaktuj się z nami na Discordzie.");
-                console.error(error);
+                alert("Wystąpił błąd z połączeniem internetowym.");
+            } finally {
+                btn.innerText = "Odbierz kod i przejdź na Discord";
+                btn.disabled = false;
             }
         }
     </script>
