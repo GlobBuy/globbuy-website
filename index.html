@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobBuy | Złóż zamówienie</title>
+    <style>
+        :root {
+            --main-color: #00f3ff;
+            --dark-bg: #0d0e15;
+            --panel-bg: #1a1c29;
+            --success-color: #00ff88;
+            --history-color: #ffb800;
+        }
+        body {
+            background-color: var(--dark-bg);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* Pasek nawigacji górnej */
+        .top-nav {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .history-btn {
+            background: transparent;
+            color: var(--history-color);
+            border: 1px solid var(--history-color);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+        .history-btn:hover {
+            background: var(--history-color);
+            color: #000;
+        }
+
+        h1 {
+            color: var(--main-color);
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            font-size: 3em;
+            margin: 0 0 10px 0;
+            text-align: center;
+        }
+        .container {
+            background: var(--panel-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab {
+            padding: 10px; background: #222; border-radius: 6px;
+            cursor: pointer; transition: 0.3s; flex: 1; text-align: center;
+            font-size: 14px;
+        }
+        .tab:hover, .tab.active { background: var(--main-color); color: #000; font-weight: bold; }
+        
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 5px; color: #aaa; }
+        input, select, textarea {
+            width: 100%; padding: 12px; border-radius: 6px;
+            border: 1px solid #333; background: #222; color: #fff;
+            box-sizing: border-box; font-size: 14px;
+        }
+        
+        .submit-btn {
+            background: transparent;
+            color: var(--main-color);
+            border: 2px solid var(--main-color);
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .submit-btn:hover {
+            background: var(--main-color);
+            color: #000;
+            box-shadow: 0 0 15px var(--main-color);
+        }
+        
+        /* Ekran sukcesu */
+        #success-screen, #history-screen {
+            display: none;
+            text-align: center;
+        }
+        .order-code-box {
+            background: #222;
+            border: 2px dashed var(--success-color);
+            padding: 20px;
+            font-size: 2em;
+            letter-spacing: 2px;
+            color: var(--success-color);
+            border-radius: 8px;
+            margin: 20px 0;
+            user-select: all;
+        }
+        .discord-btn {
+            background: #5865F2;
+            color: white;
+            border: none;
+            display: inline-block;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+        .discord-btn:hover {
+            background: #4752C4;
+            box-shadow: 0 0 15px rgba(88, 101, 242, 0.5);
+        }
+
+        /* Lista historii */
+        .history-item {
+            background: #222;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--history-color);
+            text-align: left;
+        }
+        .history-item strong { color: var(--main-color); letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <h1>GlobBuy</h1>
+        <button class="history-btn" onclick="showHistory()">Twoje Kody Zgłoszeń</button>
+    </div>
+    
+    <div class="container" id="order-form-container">
+        <div class="tabs">
+            <div class="tab active" onclick="setCategory('Gry')">🎮 Gry</div>
+            <div class="tab" onclick="setCategory('Konta')">📺 Konta</div>
+            <div class="tab" onclick="setCategory('Waluty')">💰 Waluta</div>
+            <div class="tab" onclick="setCategory('Pojazdy z Chin')">🛴 Pojazdy z Chin</div>
+        </div>
+
+        <h3>Kategoria: <span id="selected-category" style="color: var(--main-color);">Gry</span></h3>
+        
+        <div class="input-group">
+            <label>Wybierz Platformę (jeśli dotyczy)</label>
+            <select id="platform">
+                <option value="Brak / Nie dotyczy">Brak / Nie dotyczy</option>
+                <option value="PC">PC</option>
+                <option value="PS5">PlayStation 5</option>
+                <option value="PS4">PlayStation 4</option>
+                <option value="Xbox Series X/S">Xbox Series X/S</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Preferowana Metoda Płatności</label>
+            <select id="payment-method">
+                <option value="BLIK">BLIK</option>
+                <option value="PayPal">PayPal</option>
+                <option value="LTC (Litecoin)">Crypto: LTC</option>
+                <option value="BTC (Bitcoin)">Crypto: BTC</option>
+                <option value="Paysafecard">Paysafecard</option>
+                <option value="Inna metoda">Inna metoda</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Czego dokładnie potrzebujesz?</label>
+            <textarea id="order-details" rows="5" placeholder="Np. Forza Horizon 5, klucz na Xbox. Jaka cena?"></textarea>
+        </div>
+
+        <button class="submit-btn" onclick="submitOrder()">Wyślij Zapytanie i Odbierz Kod</button>
+    </div>
+
+    <div class="container" id="success-screen">
+        <h2 style="color: var(--success-color);">Zgłoszenie wysłane!</h2>
+        <p>Skopiuj poniższy kod, wejdź na naszego Discorda i otwórz ticket, aby dokończyć zamówienie.</p>
+        
+        <div class="order-code-box" id="generated-code">GB-XXXXX</div>
+        
+        <p><i>Nie martw się, jeśli zamkniesz kartę! Kod zapisuje się w "Twoje Kody Zgłoszeń" u góry strony.</i></p>
+        
+        <a href="https://discord.gg/jCXMEBdMzG" target="_blank" class="discord-btn">Dołącz do Discorda i Otwórz Ticket</a>
+        <br><br>
+        <button class="history-btn" onclick="backToHome()" style="border-color: #555; color: #aaa;">Wróć do strony głównej</button>
+    </div>
+
+    <div class="container" id="history-screen">
+        <h2 style="color: var(--history-color);">Twoje wygenerowane kody</h2>
+        <p>Tutaj znajdziesz kody swoich wcześniejszych zapytań.</p>
+        
+        <div id="history-list"></div>
+        
+        <button class="submit-btn" onclick="backToHome()">Wróć do składania zamówienia</button>
+    </div>
+
+    <script>
+        let currentCategory = 'Gry';
+        
+        // Zaktualizowany link do webhooka
+        const webhookUrl = "https://discord.com/api/webhooks/1524502024274837554/5TZfq9ksgZZ_bGgaME9fB1yY5qJx-JLsWOYuFOkGNT-OEQE_v8sPfKbxTYVYsXOFVvMm";
+
+        function setCategory(category) {
+            currentCategory = category;
+            document.getElementById('selected-category').innerText = category;
+            
+            // Dynamiczna zmiana podpowiedzi w textarea
+            const detailsArea = document.getElementById('order-details');
+            if (category === 'Pojazdy z Chin') {
+                detailsArea.placeholder = "Np. Rower elektryczny z Alibaby, wyczynowe części, kontroler do KuKirin G2 Master...";
+            } else if (category === 'Gry') {
+                detailsArea.placeholder = "Np. Forza Horizon 5, klucz na Xbox. Jaka cena?";
+            } else if (category === 'Waluty') {
+                detailsArea.placeholder = "Np. Potrzebuję 2000 Robuxów lub V-Dolców.";
+            } else {
+                detailsArea.placeholder = "Opisz szczegółowo czego szukasz...";
+            }
+
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function generateOrderCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < 6; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return 'GB-' + result;
+        }
+
+        // Zapisywanie do Local Storage (Przeglądarka)
+        function saveOrderToHistory(code, category) {
+            let history = JSON.parse(localStorage.getItem('globbuy_history')) || [];
+            const date = new Date().toLocaleDateString('pl-PL') + " " + new Date().toLocaleTimeString('pl-PL');
+            
+            history.unshift({ code, category, date }); // Dodaje na początek listy
+            localStorage.setItem('globbuy_history', JSON.stringify(history));
+        }
+
+        // Wyświetlanie Historii
+        function showHistory() {
+            document.getElementById('order-form-container').style.display = 'none';
+            document.getElementById('success-screen').style.display = 'none';
+            document.getElementById('history-screen').style.display = 'block';
+
+            const historyList = document.getElementById('history-list');
+            let history = JSON.parse(localStorage.getItem('globbuy_history')) || [];
+            
+            if (history.length === 0) {
+                historyList.innerHTML = "<p style='color:#777;'>Nie masz jeszcze zapisanych kodów.</p>";
+                return;
+            }
+
+            historyList.innerHTML = '';
+            history.forEach(item => {
+                historyList.innerHTML += `
+                    <div class="history-item">
+                        Kod zgłoszenia: <strong>${item.code}</strong><br>
+                        <span style="font-size: 12px; color: #888;">
+                            Kategoria: ${item.category} | Data: ${item.date}
+                        </span>
+                    </div>
+                `;
+            });
+        }
+
+        function backToHome() {
+            document.getElementById('history-screen').style.display = 'none';
+            document.getElementById('success-screen').style.display = 'none';
+            document.getElementById('order-form-container').style.display = 'block';
+            document.getElementById('order-details').value = '';
+        }
+
+        async function submitOrder() {
+            const platform = document.getElementById('platform').value;
+            const payment = document.getElementById('payment-method').value;
+            const details = document.getElementById('order-details').value;
+
+            if(details.trim() === "") {
+                alert("Musisz opisać, czego potrzebujesz!");
+                return;
+            }
+
+            const orderCode = generateOrderCode();
+
+            // Webhook Discord
+            const payload = {
+                username: "GlobBuy System",
+                embeds: [{
+                    title: "🛒 Nowe zapytanie o produkt!",
+                    color: 65535,
+                    fields: [
+                        { name: "Kod Zamówienia", value: `**${orderCode}**`, inline: false },
+                        { name: "Kategoria", value: currentCategory, inline: true },
+                        { name: "Płatność", value: payment, inline: true },
+                        { name: "Platforma", value: platform, inline: true },
+                        { name: "Wiadomość od klienta", value: `\`\`\`${details}\`\`\``, inline: false }
+                    ],
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            try {
+                // Wyślij na Discord
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                // Zapisz w historii przeglądarki
+                saveOrderToHistory(orderCode, currentCategory);
+
+                // Zmień ekran
+                document.getElementById('order-form-container').style.display = 'none';
+                document.getElementById('success-screen').style.display = 'block';
+                document.getElementById('generated-code').innerText = orderCode;
+
+            } catch (error) {
+                alert("Wystąpił błąd. Skontaktuj się z nami na Discordzie.");
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
